@@ -4,7 +4,8 @@ import java.io.*;
 
 public class Solution {
 
-	static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	static BufferedReader br = null;	
+	private static final String FILENAME = "C:\\testCase2_Input.txt";
 
 	public static Tree solve() {
 
@@ -13,6 +14,13 @@ public class Solution {
 		int[] elements = null;
 		byte[] colors = null;
 		int[][] elementsEdges = null;
+		
+		try {	
+			br = new BufferedReader(new FileReader(FILENAME));
+		} catch (FileNotFoundException e) {			
+			e.printStackTrace();
+		}
+		
 
 		while (!dataOK) {
 			treeSize = getTreeSize();
@@ -44,6 +52,9 @@ public class Solution {
 
 		Tree root = solve();
 
+		DebugVisitor visDebug = new DebugVisitor();
+		root.accept(visDebug);
+		
 		SumInLeavesVisitor vis1 = new SumInLeavesVisitor();
 		ProductOfRedNodesVisitor vis2 = new ProductOfRedNodesVisitor();
 		FancyVisitor vis3 = new FancyVisitor();
@@ -64,11 +75,11 @@ public class Solution {
 
 	private static int getTreeSize() {
 
-		System.out.println("Digite o tamanho da árvore. O número deve estar entre 1 e 100000");
+		//System.out.println("Digite o tamanho da árvore. O número deve estar entre 1 e 100000");
 
 		try {
 
-			String val = in.readLine();
+			String val = br.readLine();
 			try {
 
 				int treeSize = Integer.parseInt(val);
@@ -76,7 +87,7 @@ public class Solution {
 					return treeSize;
 
 			} catch (Exception ex) {
-				System.out.println("Valor inválido!");
+				//System.out.println("Valor inválido!");
 				return 0;
 			}
 
@@ -89,12 +100,12 @@ public class Solution {
 
 	private static int[] getElements(int treeSize) {
 
-		System.out.println(
-				"Digite os elementos da árvores separados por espaço. A quantidade deve ser igual ao tamanho da árvore e os valores devem estar entre 1 e 1000");
+		/*System.out.println(
+				"Digite os elementos da árvores separados por espaço. A quantidade deve ser igual ao tamanho da árvore e os valores devem estar entre 1 e 1000");*/
 
 		try {
 
-			String[] val = in.readLine().trim().split("\\s+");
+			String[] val = br.readLine().trim().split("\\s+");
 			int[] elements = new int[val.length];
 
 			try {
@@ -106,7 +117,7 @@ public class Solution {
 					return elements;
 
 			} catch (Exception ex) {
-				System.out.println("Um dos valores é inválido!");
+				//System.out.println("Um dos valores é inválido!");
 				return null;
 			}
 
@@ -120,11 +131,11 @@ public class Solution {
 
 	private static byte[] getElementsColor(int treeSize) {
 
-		System.out.println("Digite as cores dos elementos da árvore separadas por espaço. Red: 0, Green: 1");
+		//System.out.println("Digite as cores dos elementos da árvore separadas por espaço. Red: 0, Green: 1");
 
 		try {
 
-			String[] val = in.readLine().trim().split("\\s+");
+			String[] val = br.readLine().trim().split("\\s+");
 			byte[] colors = new byte[val.length];
 
 			try {
@@ -136,7 +147,7 @@ public class Solution {
 					return colors;
 
 			} catch (Exception ex) {
-				System.out.println("Um dos valores é inválido!");
+				//System.out.println("Um dos valores é inválido!");
 				return null;
 			}
 
@@ -154,11 +165,11 @@ public class Solution {
 		try {
 
 			for (int i = 0; i < treeSize - 1; i++) {
-				System.out.println(String.format(
+				/*System.out.println(String.format(
 						"Digite a ligação %1$d entre os elementos da árvore, separado por espaço. Total de ligações: %2$d",
-						i + 1, treeSize - 1));
+						i + 1, treeSize - 1));*/
 
-				String[] val = in.readLine().trim().split("\\s+");
+				String[] val = br.readLine().trim().split("\\s+");
 
 				try {
 					elementsEdges[i] = new int[2];
@@ -166,7 +177,7 @@ public class Solution {
 					elementsEdges[i][1] = Integer.parseInt(val[1]);
 
 				} catch (Exception ex) {
-					System.out.println("Um dos valores é inválido!");
+					//System.out.println("Um dos valores é inválido!");
 					return null;
 				}
 			}

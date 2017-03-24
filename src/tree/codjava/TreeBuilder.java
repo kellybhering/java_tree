@@ -3,7 +3,7 @@ package tree.codjava;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class TreeBuilder {
+class TreeBuilder {
 
 	public static boolean validateTreeSize(int size) {
 		return size >= 2 && size <= Math.pow(10, 5);

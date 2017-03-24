@@ -5,8 +5,7 @@ class FancyVisitor extends TreeVis {
 	private int _resultGreenLeaves = 0;
 	
     public int getResult() {
-      	int result = _resultTreeNonLeaf - _resultGreenLeaves;
-        return result < 0 ? result * -1 : result;
+    	return Math.abs(_resultTreeNonLeaf - _resultGreenLeaves);        
     }
 
     public void visitNode(TreeNode node) {
