@@ -91,20 +91,31 @@ class TreeBuilder {
 		}
 
 		// Insert TreeLeaves
-		for (int i = 0; i < elements.length; i++) {
-			if (!treeFatherNodesNumber.contains(i + 1)) {
-				fatherNodeNumber = getElementFather(elementsEdges, i + 1);
-				if (fatherNodeNumber > 0) {
-
-					fatherNode = (TreeNode) treeElements.get(fatherNodeNumber - 1);
-					depth = fatherNode.getDepth() + 1;
-					element = new TreeLeaf(elements[i], colors[i] == 0 ? Color.RED : Color.GREEN, depth);
-					treeElements.set(i, element);
-					fatherNode.addChild(element);
-
-				}
+		int childIndex;
+		for (int i = 0; i < elementsEdges.length; i++) {
+			childIndex = elementsEdges[i][1] - 1;
+			if (treeElements.get(childIndex) == null) {
+				fatherNode = (TreeNode) treeElements.get(elementsEdges[i][0] - 1);
+				depth = fatherNode.getDepth() + 1;
+				element = new TreeLeaf(elements[childIndex], colors[childIndex] == 0 ? Color.RED : Color.GREEN, depth);
+				treeElements.set(childIndex, element);
+				fatherNode.addChild(element);
 			}
 		}
+
+		// Insert TreeLeaves
+		/*
+		 * for (int i = 0; i < elements.length; i++) { if
+		 * (!treeFatherNodesNumber.contains(i + 1)) { fatherNodeNumber =
+		 * getElementFather(elementsEdges, i + 1); if (fatherNodeNumber > 0) {
+		 * 
+		 * fatherNode = (TreeNode) treeElements.get(fatherNodeNumber - 1); depth
+		 * = fatherNode.getDepth() + 1; element = new TreeLeaf(elements[i],
+		 * colors[i] == 0 ? Color.RED : Color.GREEN, depth); treeElements.set(i,
+		 * element); fatherNode.addChild(element);
+		 * 
+		 * } } }
+		 */
 
 		return treeElements.get(0);
 	}

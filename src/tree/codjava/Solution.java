@@ -3,34 +3,7 @@ package tree.codjava;
 import java.io.*;
 
 public class Solution {
-
-	static BufferedReader br = null;	
-	private static final String FILENAME = "D:\\Teste\\Input\\testCase14_Input.txt";
-	private static final String FILENAMEOUTPUT = "D:\\Teste\\Output\\testCase14_Output.txt";
 	
-	public static Tree solve() {
-
-		
-		int treeSize = 0;
-		int[] elements = null;
-		byte[] colors = null;
-		int[][] elementsEdges = null;
-		
-		try {	
-			br = new BufferedReader(new FileReader(FILENAME));
-			//br = new BufferedReader(new InputStreamReader(System.in));
-		} catch (Exception e) {
-            e.printStackTrace();
-        }
-				
-		treeSize = getTreeSize();
-		elements = getElements(treeSize);			
-		colors = getElementsColor(treeSize);			
-		elementsEdges = getelementsEdges(treeSize);			
-
-		return TreeBuilder.buildTree(treeSize, elements, colors, elementsEdges);
-	}
-
 	public static void main(String[] args) {
 
 		Tree root = solve();
@@ -54,7 +27,7 @@ public class Solution {
 		System.out.println(res2);
 		System.out.println(res3);
 		
-		verifyResult(res1, res2, res3);
+		//verifyResult(res1, res2, res3);
 
 	}
 	
@@ -75,7 +48,34 @@ public class Solution {
 		
 		
 	}
+	
+	static BufferedReader br = null;	
+	private static final String FILENAME = "C:\\Teste\\Input\\testCase14_Input.txt";
+	private static final String FILENAMEOUTPUT = "C:\\Teste\\Output\\testCase14_Output.txt";
+	
+	public static Tree solve() {
 
+		
+		int treeSize = 0;
+		int[] elements = null;
+		byte[] colors = null;
+		int[][] elementsEdges = null;
+		
+		try {	
+			//br = new BufferedReader(new FileReader(FILENAME));
+			br = new BufferedReader(new InputStreamReader(System.in));
+		} catch (Exception e) {
+            e.printStackTrace();
+        }
+				
+		treeSize = getTreeSize();
+		elements = getElements(treeSize);			
+		colors = getElementsColor(treeSize);			
+		elementsEdges = getelementsEdges(treeSize);			
+
+		return TreeBuilder.buildTree(treeSize, elements, colors, elementsEdges);
+	}
+	
 	private static int getTreeSize() {
 
 		try {
