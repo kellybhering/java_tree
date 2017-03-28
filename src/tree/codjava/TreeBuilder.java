@@ -3,7 +3,7 @@ package tree.codjava;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class TreeBuilder {
+class TreeBuilder {
 
 	public static boolean validateTreeSize(int size) {
 		return size >= 2 && size <= Math.pow(10, 5);
@@ -36,9 +36,9 @@ public class TreeBuilder {
 		// Constraint: 1 <= x[i] <= math.pow(10,3)
 		for (int i = 0; i < elementsEdges.length; i++) {
 			for (int j = 0; j < elementsEdges[i].length; j++) {
-				if(elementsEdges[i][j] < 1 || elementsEdges[i][j] > treeSize)
+				if (elementsEdges[i][j] < 1 || elementsEdges[i][j] > treeSize)
 					return false;
-			}			
+			}
 		}
 
 		return true;
@@ -47,12 +47,13 @@ public class TreeBuilder {
 	public static Tree buildTree(int treeSize, int[] elements, byte[] colors, int[][] elementsEdges) {
 
 		ArrayList<Integer> treeFatherNodesNumber = new ArrayList<>();
+		int treeFatherNodeNumber = 0;
+		int fatherNodeNumber;
+		TreeNode fatherNode;
+
 		ArrayList<Tree> treeElements = new ArrayList<>();
 		Tree element = null;
 		int depth = 0;
-		int fatherElementNumber = 0;
-		TreeNode fatherElementNode = null;
-		int treeElement = 0;
 
 		// Find TreeNodes
 		for (int i = 0; i < elementsEdges.length; i++) {
@@ -65,41 +66,57 @@ public class TreeBuilder {
 		for (int i = 0; i < elements.length; i++)
 			treeElements.add(null);
 
-		Collections.sort(treeFatherNodesNumber);
-
 		// Insert TreeNodes
 		for (int i = 0; i < treeFatherNodesNumber.size(); i++) {
-			treeElement = treeFatherNodesNumber.get(i);
+			fatherNode = null;
+			treeFatherNodeNumber = treeFatherNodesNumber.get(i);
 
-			fatherElementNumber = getElementFather(elementsEdges, treeElement);
+			fatherNodeNumber = getElementFather(elementsEdges, treeFatherNodeNumber);
 
-			if (fatherElementNumber > 0)				
-				fatherElementNode = (TreeNode) treeElements.get(fatherElementNumber - 1);
+			if (fatherNodeNumber > 0)
+				fatherNode = (TreeNode) treeElements.get(fatherNodeNumber - 1);
+			else
+				fatherNode = (TreeNode) treeElements.get(0);
 
-			depth = fatherElementNumber == 0 ? 0 : fatherElementNode.getDepth() + 1;
+			depth = fatherNodeNumber > 0 ? fatherNode.getDepth() + 1 : 0;
 
-			element = new TreeNode(elements[treeElement - 1], colors[treeElement - 1] == 0 ? Color.RED : Color.GREEN, depth);
-			treeElements.set(treeElement - 1, element);
+			element = new TreeNode(elements[treeFatherNodeNumber - 1],
+					colors[treeFatherNodeNumber - 1] == 0 ? Color.RED : Color.GREEN, depth);
+			treeElements.set(treeFatherNodeNumber - 1, element);
 
 			// Add child
-			if (fatherElementNode != null)
-				fatherElementNode.addChild(element);
+			if (fatherNode != null)
+				fatherNode.addChild(element);
 
 		}
 
 		// Insert TreeLeaves
-		for (int i = 0; i < elements.length; i++) {
-			if (!treeFatherNodesNumber.contains(i + 1)) {
-				fatherElementNumber = getElementFather(elementsEdges, i + 1);
-				fatherElementNode = (TreeNode) treeElements.get(fatherElementNumber - 1);
-				depth = treeElements.get(fatherElementNumber - 1).getDepth() + 1;
-				element = new TreeLeaf(elements[i], colors[i] == 0 ? Color.RED : Color.GREEN, depth);
-				treeElements.set(i, element);
-				fatherElementNode.addChild(element);
+		int childIndex;
+		for (int i = 0; i < elementsEdges.length; i++) {
+			childIndex = elementsEdges[i][1] - 1;
+			if (treeElements.get(childIndex) == null) {
+				fatherNode = (TreeNode) treeElements.get(elementsEdges[i][0] - 1);
+				depth = fatherNode.getDepth() + 1;
+				element = new TreeLeaf(elements[childIndex], colors[childIndex] == 0 ? Color.RED : Color.GREEN, depth);
+				treeElements.set(childIndex, element);
+				fatherNode.addChild(element);
 			}
 		}
 
-		
+		// Insert TreeLeaves
+		/*
+		 * for (int i = 0; i < elements.length; i++) { if
+		 * (!treeFatherNodesNumber.contains(i + 1)) { fatherNodeNumber =
+		 * getElementFather(elementsEdges, i + 1); if (fatherNodeNumber > 0) {
+		 * 
+		 * fatherNode = (TreeNode) treeElements.get(fatherNodeNumber - 1); depth
+		 * = fatherNode.getDepth() + 1; element = new TreeLeaf(elements[i],
+		 * colors[i] == 0 ? Color.RED : Color.GREEN, depth); treeElements.set(i,
+		 * element); fatherNode.addChild(element);
+		 * 
+		 * } } }
+		 */
+
 		return treeElements.get(0);
 	}
 
