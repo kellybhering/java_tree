@@ -7,7 +7,7 @@ public class Solution {
 
 	public static void main(String[] args) {
 
-		Tree root = solveTwo();
+		Tree root = solveAdapted();
 
 		// DebugVisitor visDebug = new DebugVisitor();
 		// root.accept(visDebug);
@@ -34,65 +34,75 @@ public class Solution {
 
 	private static int[] values;
 	private static Color[] colors;
-	private static HashMap<Integer, HashSet<Integer>> map;
+	private static TreeEdgesManager myMap;
+	static BufferedReader br = null;
+	private static final String FILENAME = "C:\\Teste\\Input\\testCase12_Input.txt";
+	private static final String FILENAMEOUTPUT = "C:\\Teste\\Output\\testCase12_Output.txt";
 
-	public static Tree solveTwo() {
-		Scanner scan = new Scanner(System.in);
-        int numNodes = scan.nextInt();
-        
-        /* Handle 1-node tree */
-        if (numNodes == 1) {
-            return new TreeLeaf(values[0], colors[0], 0);
-        }
-        
-        /* Read and save nodes and colors */
-        values = new int[numNodes];
-        colors = new Color[numNodes];
-        map = new HashMap<>(numNodes);
-        for (int i = 0; i < numNodes; i++) {
-            values[i] = scan.nextInt();
-        }
-        for (int i = 0; i < numNodes; i++) {
-            colors[i] = scan.nextInt() == 0 ? Color.RED : Color.GREEN;
-        }
-        
-        /* Save edges */
-        for (int i = 0; i < numNodes - 1; i++) {
-            int u = scan.nextInt();
-            int v = scan.nextInt();
-            
-            /* Edges are undirected: Add 1st direction */
-            HashSet<Integer> uNeighbors = map.get(u);
-            if (uNeighbors == null) {                
-                uNeighbors = new HashSet<>();
-                map.put(u, uNeighbors);
-            }
-            uNeighbors.add(v);
-            
-            /* Edges are undirected: Add 2nd direction */
-            HashSet<Integer> vNeighbors = map.get(v);
-            if (vNeighbors == null) {
-                vNeighbors = new HashSet<>();
-                map.put(v, vNeighbors);
-            }
-            vNeighbors.add(u);
-        }
-        scan.close();
-        
-        /* Create Tree */
-        TreeNode root = new TreeNode(values[0], colors[0], 0);
-        addChildren(root, 1);
-        return root;
+	public static Tree solveAdapted() {
+		
+		try {
+			Scanner scan = new Scanner(new File(FILENAME));
+
+			int numNodes = scan.nextInt();
+
+			if (numNodes == 1) {
+				return new TreeLeaf(values[0], colors[0], 0);
+			}
+
+			values = new int[numNodes];
+			colors = new Color[numNodes];
+			myMap = new TreeEdgesManager(numNodes);
+
+			for (int i = 0; i < numNodes; i++) {
+				values[i] = scan.nextInt();
+			}
+			for (int i = 0; i < numNodes; i++) {
+				colors[i] = scan.nextInt() == 0 ? Color.RED : Color.GREEN;
+			}
+
+			for (int i = 0; i < numNodes - 1; i++) {
+				int u = scan.nextInt();
+				int v = scan.nextInt();
+
+				TreeEdge uNeighbors = myMap.getEdgeByIndex(u - 1);
+				if (uNeighbors == null) {
+					uNeighbors = new TreeEdge(u);
+				}
+				uNeighbors.addEdge(v);
+				myMap.setEdge(uNeighbors, u - 1);
+				//myMap.addEdge(uNeighbors);
+
+				TreeEdge vNeighbors = myMap.getEdgeByIndex(v - 1);
+				if (vNeighbors == null) {
+					vNeighbors = new TreeEdge(v);
+				}
+				vNeighbors.addEdge(u);
+				myMap.setEdge(vNeighbors, v - 1);
+				//myMap.addEdge(vNeighbors);
+			}
+			scan.close();
+			
+			TreeNode root = new TreeNode(values[0], colors[0], 0);
+			addChildrenAdapted(root, 1);
+			return root;
+		} catch (FileNotFoundException e) {			
+			e.printStackTrace();
+		}
+		
+		return null;
+
 	}
 
-	private static void addChildren(TreeNode parent, Integer parentNum) {
-		/* Get HashSet of children and loop through them */
-		for (Integer treeNum : map.get(parentNum)) {
-			map.get(treeNum).remove(parentNum); // removes the opposite arrow
-												// direction
+	private static void addChildrenAdapted(TreeNode parent, Integer parentNum) {
 
-			/* Add child */
-			HashSet<Integer> grandChildren = map.get(treeNum);
+		TreeEdge edgesByParent = myMap.getEdgeByKey(parentNum);
+		TreeEdge childEdge;
+		for (Integer treeNum : edgesByParent) {
+			childEdge = myMap.getEdgeByKey(treeNum);
+			childEdge.removeEdge(parentNum);
+
+			ArrayList<Integer> grandChildren = childEdge.getEdges();
 			boolean childHasChild = (grandChildren != null && !grandChildren.isEmpty());
 			Tree tree;
 			if (childHasChild) {
@@ -102,37 +112,13 @@ public class Solution {
 			}
 			parent.addChild(tree);
 
-			/* Recurse if necessary */
 			if (tree instanceof TreeNode) {
-				addChildren((TreeNode) tree, treeNum);
+				addChildrenAdapted((TreeNode) tree, treeNum);
 			}
 		}
 	}
 
-	private static void verifyResult(int res1, int res2, int res3) {
-		try {
-			BufferedReader ot = new BufferedReader(new FileReader(FILENAMEOUTPUT));
-
-			int valor1 = Integer.parseInt(ot.readLine());
-			int valor2 = Integer.parseInt(ot.readLine());
-			int valor3 = Integer.parseInt(ot.readLine());
-
-			System.out.println(valor1 + " : " + (res1 == valor1) + "  Diferença: " + (res1 - valor1));
-			System.out.println(valor2 + " : " + (res2 == valor2) + "  Diferença: " + (res2 - valor2));
-			System.out.println(valor3 + " : " + (res3 == valor3) + "  Diferença: " + (res3 - valor3));
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	static BufferedReader br = null;
-	private static final String FILENAME = "C:\\Teste\\Input\\testCase1_Input.txt";
-	private static final String FILENAMEOUTPUT = "C:\\Teste\\Output\\testCase1_Output.txt";
-
-	public static Tree solve() {
+	public static Tree solveOriginal() {
 
 		int treeSize = 0;
 		int[] elements = null;
@@ -252,6 +238,25 @@ public class Solution {
 		}
 
 		return null;
+	}
+
+	private static void verifyResult(int res1, int res2, int res3) {
+		try {
+			BufferedReader ot = new BufferedReader(new FileReader(FILENAMEOUTPUT));
+
+			int valor1 = Integer.parseInt(ot.readLine());
+			int valor2 = Integer.parseInt(ot.readLine());
+			int valor3 = Integer.parseInt(ot.readLine());
+
+			System.out.println(valor1 + " : " + (res1 == valor1) + "  Diferença: " + (res1 - valor1));
+			System.out.println(valor2 + " : " + (res2 == valor2) + "  Diferença: " + (res2 - valor2));
+			System.out.println(valor3 + " : " + (res3 == valor3) + "  Diferença: " + (res3 - valor3));
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }
